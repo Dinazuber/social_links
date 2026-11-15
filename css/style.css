@@ -401,3 +401,213 @@ body {
   height: 22px;
   object-fit: contain;
 }
+
+.discord-card {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.dc-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.dc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dc-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  min-width: 0;
+}
+
+.dc-art {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.dc-emoji {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  font-size: 1.4rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.dc-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.dc-info strong {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dc-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+
+/* ===== Ordinateur : tout tient dans la fenêtre, sans scroll ===== */
+@media (min-width: 641px) {
+  html, body {
+    height: 100%;
+  }
+
+  body {
+    height: 100dvh;
+    padding: clamp(10px, 2.5vh, 24px) 18px;
+    overflow: hidden;
+  }
+
+  .wrapper {
+    height: 100%;
+    max-height: 100%;
+    gap: clamp(8px, 1.8vh, 16px);
+  }
+
+  .glass {
+    padding: clamp(12px, 2.2vh, 24px);
+    border-radius: 22px;
+  }
+
+  /* Haut de page : profil + liens */
+  .top {
+    flex: 0 0 auto;
+    gap: 14px;
+  }
+
+  .avatar {
+    width: clamp(64px, 13vh, 110px);
+    height: clamp(64px, 13vh, 110px);
+  }
+
+  .name {
+    margin-top: clamp(6px, 1.2vh, 14px);
+    font-size: clamp(1.2rem, 3.2vh, 1.7rem);
+  }
+
+  .bio {
+    margin-top: 2px;
+    font-size: clamp(0.8rem, 1.8vh, 0.95rem);
+  }
+
+  .socials {
+    margin-top: clamp(8px, 1.6vh, 16px);
+    gap: 10px;
+  }
+
+  .social {
+    width: clamp(34px, 5.5vh, 42px);
+    height: clamp(34px, 5.5vh, 42px);
+  }
+
+  .links {
+    gap: clamp(6px, 1.2vh, 10px);
+  }
+
+  .link {
+    padding: clamp(8px, 1.6vh, 14px) 16px;
+    font-size: clamp(0.85rem, 2vh, 1rem);
+  }
+
+  /* Discord : compact */
+  .discord-card {
+    flex: 0 0 auto;
+    padding: clamp(8px, 1.4vh, 12px) 16px;
+    gap: clamp(6px, 1vh, 10px);
+  }
+
+  .dc-avatar {
+    width: clamp(36px, 6vh, 48px);
+    height: clamp(36px, 6vh, 48px);
+  }
+
+  .dc-row {
+    padding: clamp(6px, 1vh, 9px) 10px;
+  }
+
+  .dc-art, .dc-emoji {
+    width: clamp(34px, 5.5vh, 42px);
+    height: clamp(34px, 5.5vh, 42px);
+  }
+
+  .dc-list {
+    gap: clamp(6px, 1vh, 8px);
+  }
+
+  /* Playlist : prend la place restante, la liste défile en interne si besoin */
+  .playlist {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .pl-header {
+    flex: 0 0 auto;
+  }
+
+  .pl-icon {
+    width: clamp(40px, 7vh, 52px);
+    height: clamp(40px, 7vh, 52px);
+  }
+
+  .tracks {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    margin-top: clamp(8px, 1.5vh, 14px);
+    gap: clamp(3px, 0.6vh, 6px);
+  }
+
+  .track {
+    padding: clamp(6px, 1.1vh, 10px) 12px;
+    font-size: clamp(0.85rem, 1.9vh, 1rem);
+  }
+
+  .footer {
+    flex: 0 0 auto;
+    margin-top: 0;
+    font-size: 0.75rem;
+  }
+}
+
+/* ===== Téléphone : la page peut défiler ===== */
+@media (max-width: 640px) {
+  body {
+    min-height: 100vh;
+    height: auto;
+    overflow-x: hidden;
+    padding: 18px 12px;
+  }
+
+  .wrapper {
+    height: auto;
+  }
+
+  .tracks {
+    max-height: 260px;
+  }
+}

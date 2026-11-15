@@ -29,6 +29,7 @@ const CONFIG = {
   discord: {
     id: "626441904573382700",   // les 18-19 chiffres copiés à l'étape 1
     showCard: true,         // mets false pour masquer la carte
+    fallbackStatus: "It's dangerous to go alone!", // affiché si aucun statut Discord n'est défini
   },
 
   footer: "Fait avec ♥",
@@ -333,6 +334,13 @@ async function setupDiscord() {
   const card = document.getElementById("discord-card");
   if (!d || !d.id || !d.showCard) return;
 
+  const el = (tag, cls, text) => {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  };
+
   try {
     const res = await fetch(`https://api.lanyard.rest/v1/users/${d.id}`);
     const json = await res.json();
@@ -345,43 +353,98 @@ async function setupDiscord() {
       : `https://cdn.discordapp.com/embed/avatars/${Number((BigInt(user.id) >> 22n) % 6n)}.png`;
 
     const colors = { online: "#22c55e", idle: "#eab308", dnd: "#ef4444", offline: "#6b7280" };
+    const statusLabels = { online: "En ligne", idle: "Absent", dnd: "Ne pas déranger", offline: "Hors ligne" };
 
-    const img = document.createElement("img");
-    img.className = "dc-avatar";
+    // Activités : jeu en premier, puis musique Spotify, puis statut personnalisé
+    const game = activities.find(a => a.type === 0);
+    const music = activities.find(a => a.type === 2 && a.name === "Spotify");
+    const custom = activities.find(a => a.type === 4);
+
+    card.innerHTML = "";
+
+    // En-tête : avatar, nom, statut
+    const img = el("img", "dc-avatar");
     img.src = avatarUrl;
     img.alt = user.username;
 
-    const dot = document.createElement("span");
-    dot.className = "dc-dot";
+    const dot = el("span", "dc-dot");
     dot.style.background = colors[status] || colors.offline;
 
-    const avWrap = document.createElement("div");
-    avWrap.className = "dc-avwrap";
+    const avWrap = el("div", "dc-avwrap");
     avWrap.append(img, dot);
 
-    const name = document.createElement("strong");
-    name.textContent = user.global_name || user.username;
+    const head = el("div", "dc-head");
+    const headText = el("div", "dc-text");
+    const subText = el("span", "dc-sub");
+    if (custom?.emoji) {
+      if (custom.emoji.id) {
+        const em = el("img", "dc-status-emoji");
+        em.src = `https://cdn.discordapp.com/emojis/${custom.emoji.id}.${custom.emoji.animated ? "gif" : "png"}`;
+        em.alt = custom.emoji.name || "";
+        subText.appendChild(em);
+      } else if (custom.emoji.name) {
+        subText.append(custom.emoji.name + " ");
+      }
+    }
+    subText.append(custom?.state || d.fallbackStatus || statusLabels[status] || "");
 
-    const sub = document.createElement("span");
-    sub.className = "dc-sub";
-    const game = activities.find(a => a.type !== 4);
-    const custom = activities.find(a => a.type === 4);
-    sub.textContent = game ? game.name : (custom?.state || "Rien en cours");
+    headText.append(
+      el("strong", "", user.global_name || user.username),
+      subText
+    );
+    head.append(avWrap, headText);
+    card.appendChild(head);
 
-    const text = document.createElement("div");
-    text.className = "dc-text";
-    text.append(name, sub);
+    const list = el("div", "dc-list");
 
-    card.append(avWrap, text);
+    // Jeu
+    if (game) {
+      const row = el("div", "dc-row");
+
+      if (game.application_id && game.assets?.large_image && !/^(mp:|spotify:)/.test(game.assets.large_image)) {
+        const art = el("img", "dc-art");
+        art.src = `https://cdn.discordapp.com/app-assets/${game.application_id}/${game.assets.large_image}.png`;
+        art.alt = game.name;
+        art.onerror = () => art.remove();
+        row.appendChild(art);
+      } else {
+        row.appendChild(el("span", "dc-emoji", "🎮"));
+      }
+
+      const info = el("div", "dc-info");
+      info.append(el("span", "dc-label", "En jeu"), el("strong", "", game.name));
+      const mode = [game.details, game.state].filter(Boolean).join(" · ");
+      if (mode) info.appendChild(el("span", "dc-sub", mode));
+      row.appendChild(info);
+      list.appendChild(row);
+    }
+
+    // Musique Spotify
+    if (music) {
+      const row = el("div", "dc-row");
+
+      const artId = music.assets?.large_image?.replace("spotify:", "");
+      if (artId) {
+        const art = el("img", "dc-art");
+        art.src = `https://i.scdn.co/image/${artId}`;
+        art.alt = music.details || "Pochette";
+        art.onerror = () => art.remove();
+        row.appendChild(art);
+      } else {
+        row.appendChild(el("span", "dc-emoji", "🎵"));
+      }
+
+      const info = el("div", "dc-info");
+      info.append(el("span", "dc-label", "En écoute"), el("strong", "", music.details || "Spotify"));
+      if (music.state) info.appendChild(el("span", "dc-sub", music.state));
+      row.appendChild(info);
+      list.appendChild(row);
+    }
+
+    if (list.children.length) card.appendChild(list);
     card.classList.remove("hidden");
   } catch (err) {
     console.warn("Discord : impossible de charger le profil", err);
-    card.innerHTML = "";
-    const msg = document.createElement("span");
-    msg.className = "dc-sub";
-    msg.textContent = "Statut Discord indisponible";
-    card.append(msg);
-    card.classList.remove("hidden");
   }
 }
 
