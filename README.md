@@ -14,4 +14,4 @@ linkpage3/
     └── audio/
         └── ocarina.m4a      ← ta musique
 ```
-Le lien pour y accéder en lien : [https://dinazuber.github.io/social_links](https://dinazuber.github.io/social_links)
+Le lien pour y accéder en lien : [https://kageina1606.github.io/social_links/](https://kageina1606.github.io/social_links/)
