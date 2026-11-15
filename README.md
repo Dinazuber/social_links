@@ -14,5 +14,4 @@ linkpage3/
     └── audio/
         └── ocarina.m4a      ← ta musique
 ```
-
-Ouvre `index.html` dans ton navigateur. Pour GitHub Pages, envoie tout le dossier dans le repo et active Pages sur la branche `main`.
+Le lien pour y accéder en lien : [https://dinazuber.github.io/social_links](https://dinazuber.github.io/social_links)
