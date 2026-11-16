@@ -469,129 +469,229 @@ body {
   color: var(--muted);
 }
 
-/* ===== Ordinateur : tout tient dans la fenêtre, sans scroll ===== */
-@media (min-width: 641px) {
-  html, body {
-    height: 100%;
-  }
-
+/* ===== Ordinateur : deux colonnes, page scrollable ===== */
+@media (min-width: 900px) {
   body {
-    height: 100dvh;
-    padding: clamp(10px, 2.5vh, 24px) 18px;
-    overflow: hidden;
+    align-items: flex-start;
+    padding: 48px 24px 60px;
   }
 
   .wrapper {
-    height: 100%;
-    max-height: 100%;
-    gap: clamp(8px, 1.8vh, 16px);
+    max-width: 1040px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+    animation: none;
+  }
+
+  /* Pleine largeur */
+  .top,
+  #playlist-box,
+  #spotify-box,
+  .footer {
+    grid-column: 1 / -1;
+  }
+
+  /* Deux colonnes */
+  #top-games { grid-column: 1; }
+  #discord-card { grid-column: 2; }
+
+  .top {
+    grid-template-columns: 1fr 1.3fr;
+    gap: 20px;
   }
 
   .glass {
-    padding: clamp(12px, 2.2vh, 24px);
-    border-radius: 22px;
+    padding: 26px;
+    border-radius: 26px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
-  /* Haut de page : profil + liens */
-  .top {
-    flex: 0 0 auto;
-    gap: 14px;
+  .profile {
+    padding: 34px 26px;
   }
 
   .avatar {
-    width: clamp(64px, 13vh, 110px);
-    height: clamp(64px, 13vh, 110px);
+    width: 130px;
+    height: 130px;
+  }
+
+  .links {
+    gap: 14px;
+  }
+
+  .link {
+    padding: 18px;
+  }
+
+  .playlist {
+    padding: 22px 24px;
+  }
+
+  .tracks {
+    max-height: 320px;
+  }
+
+  /* Petits effets au survol */
+  .profile:hover,
+  .links-box:hover,
+  #discord-card:hover,
+  #top-games:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(192, 132, 252, 0.25);
+  }
+
+  .tg-row {
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+
+  .tg-row:hover {
+    transform: translateX(4px);
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .tg-img {
+    width: 140px;
+    height: 66px;
+  }
+}
+
+/* ===== Tops jeux et Discord : même hauteur ===== */
+@media (min-width: 900px) {
+  .wrapper {
+    align-items: stretch;
+  }
+
+  #top-games,
+  #discord-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+}
+
+/* ===== Ordinateur : version compacte pour tout voir sur une page ===== */
+@media (min-width: 900px) and (min-height: 700px) {
+  body {
+    padding: 16px 20px;
+  }
+
+  .wrapper {
+    max-width: 1000px;
+    gap: 12px;
+  }
+
+  .glass {
+    padding: 16px 18px;
+    border-radius: 20px;
+  }
+
+  /* Profil */
+  .avatar {
+    width: 84px;
+    height: 84px;
   }
 
   .name {
-    margin-top: clamp(6px, 1.2vh, 14px);
-    font-size: clamp(1.2rem, 3.2vh, 1.7rem);
+    margin-top: 8px;
+    font-size: 1.4rem;
   }
 
   .bio {
     margin-top: 2px;
-    font-size: clamp(0.8rem, 1.8vh, 0.95rem);
+    font-size: 0.85rem;
   }
 
   .socials {
-    margin-top: clamp(8px, 1.6vh, 16px);
-    gap: 10px;
+    margin-top: 10px;
+    gap: 8px;
   }
 
   .social {
-    width: clamp(34px, 5.5vh, 42px);
-    height: clamp(34px, 5.5vh, 42px);
+    width: 36px;
+    height: 36px;
   }
 
+  /* Liens */
   .links {
-    gap: clamp(6px, 1.2vh, 10px);
+    gap: 8px;
   }
 
   .link {
-    padding: clamp(8px, 1.6vh, 14px) 16px;
-    font-size: clamp(0.85rem, 2vh, 1rem);
+    padding: 10px 14px;
+    font-size: 0.9rem;
   }
 
-  /* Discord : compact */
+  /* Tops jeux */
+  .tg-row {
+    padding: 6px;
+  }
+
+  .tg-img {
+    width: 96px;
+    height: 44px;
+  }
+
+  .tg-info {
+    gap: 2px;
+  }
+
+  /* Discord */
   .discord-card {
-    flex: 0 0 auto;
-    padding: clamp(8px, 1.4vh, 12px) 16px;
-    gap: clamp(6px, 1vh, 10px);
+    gap: 8px;
   }
 
   .dc-avatar {
-    width: clamp(36px, 6vh, 48px);
-    height: clamp(36px, 6vh, 48px);
+    width: 40px;
+    height: 40px;
   }
 
   .dc-row {
-    padding: clamp(6px, 1vh, 9px) 10px;
+    padding: 6px 10px;
   }
 
-  .dc-art, .dc-emoji {
-    width: clamp(34px, 5.5vh, 42px);
-    height: clamp(34px, 5.5vh, 42px);
+  .dc-art,
+  .dc-emoji {
+    width: 34px;
+    height: 34px;
   }
 
-  .dc-list {
-    gap: clamp(6px, 1vh, 8px);
-  }
-
-  /* Playlist : prend la place restante, la liste défile en interne si besoin */
+  /* Playlist */
   .playlist {
-    flex: 1 1 auto;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .pl-header {
-    flex: 0 0 auto;
+    padding: 14px 18px;
   }
 
   .pl-icon {
-    width: clamp(40px, 7vh, 52px);
-    height: clamp(40px, 7vh, 52px);
-  }
-
-  .tracks {
-    flex: 1 1 auto;
-    min-height: 0;
-    max-height: none;
-    margin-top: clamp(8px, 1.5vh, 14px);
-    gap: clamp(3px, 0.6vh, 6px);
+    width: 40px;
+    height: 40px;
   }
 
   .track {
-    padding: clamp(6px, 1.1vh, 10px) 12px;
-    font-size: clamp(0.85rem, 1.9vh, 1rem);
+    padding: 6px 12px;
+  }
+
+  .tracks {
+    max-height: 130px;
+    margin-top: 8px;
+    gap: 3px;
   }
 
   .footer {
-    flex: 0 0 auto;
     margin-top: 0;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
+    line-height: 1;
   }
+}
+
+/* ===== Discord : lignes jeu et musique de même largeur ===== */
+.dc-list {
+  align-items: stretch;
+}
+
+.dc-row {
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* ===== Téléphone : la page peut défiler ===== */
@@ -610,4 +710,62 @@ body {
   .tracks {
     max-height: 260px;
   }
+}
+
+.top-games {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px;
+}
+
+.tg-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+}
+
+.tg-img {
+  width: 120px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.tg-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tg-name {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tg-hours {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.tg-bar {
+  height: 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.tg-bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #c084fc, #f0abfc);
 }

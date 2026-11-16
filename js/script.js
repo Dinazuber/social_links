@@ -3,7 +3,7 @@
    ===================================================== */
 const CONFIG = {
   name: "Kageina",
-  bio: "Hellooo, I'm Kageina ✨",
+  bio: "Hi! My username is Kageina and I'm a huge fan of gaming! (and a little of coding 😊) 🌟",
 
   // Images et fond
   avatar: "assets/img/avatar.png",
@@ -12,7 +12,7 @@ const CONFIG = {
   // Icônes rondes sous ton nom
   socials: [
     { icon: "assets/img/youtube.webp", url: "https://www.youtube.com/@kageina_805", label: "YouTube" },
-    { icon: "assets/img/github.png", url: "https://github.com/Dinazuber",          label: "GitHub" },
+    { icon: "assets/img/github.png", url: "https://github.com/Kageina1606",          label: "GitHub" },
     { icon: "assets/img/spotify.png", url: "https://open.spotify.com/user/twr1h5270w8h3r41knkmibx5u", label: "Spotify" },
   ],
 
@@ -31,6 +31,8 @@ const CONFIG = {
     showCard: true,         // mets false pour masquer la carte
     fallbackStatus: "It's dangerous to go alone!", // affiché si aucun statut Discord n'est défini
   },
+
+  topGames: { count: 3 },
 
   footer: "Fait avec ♥",
   openInNewTab: true,
@@ -85,6 +87,7 @@ function render() {
 
   setupDiscord();
   setupMusic();  
+  setupTopGames();
 }
 
 function makeLinkItem(l, i) {
@@ -250,18 +253,18 @@ async function setupPlaylist() {
   }
 
   // 1. Vérifie chaque morceau avant de construire la liste
-  title.textContent = "Chargement de la playlist…";
+  title.textContent = "Loading of the playlist…";
   const results = await Promise.all(allTracks.map(t => checkTrack(t.file)));
 
   allTracks.forEach((t, i) => {
-    if (!results[i]) console.warn("Morceau ignoré (ne se lit pas) :", t.title, "→", t.file);
+    if (!results[i]) console.warn("Track ignored (can't read) :", t.title, "→", t.file);
   });
 
   // 2. Ne garde que les morceaux lisibles
   const tracks = allTracks.filter((_, i) => results[i]);
 
   if (!tracks.length) {
-    title.textContent = "Aucun morceau lisible";
+    title.textContent = "None track readible";
     return;
   }
 
@@ -412,7 +415,7 @@ async function setupDiscord() {
       }
 
       const info = el("div", "dc-info");
-      info.append(el("span", "dc-label", "En jeu"), el("strong", "", game.name));
+      info.append(el("span", "dc-label", "In game"), el("strong", "", game.name));
       const mode = [game.details, game.state].filter(Boolean).join(" · ");
       if (mode) info.appendChild(el("span", "dc-sub", mode));
       row.appendChild(info);
@@ -435,7 +438,7 @@ async function setupDiscord() {
       }
 
       const info = el("div", "dc-info");
-      info.append(el("span", "dc-label", "En écoute"), el("strong", "", music.details || "Spotify"));
+      info.append(el("span", "dc-label", "is listening"), el("strong", "", music.details || "Spotify"));
       if (music.state) info.appendChild(el("span", "dc-sub", music.state));
       row.appendChild(info);
       list.appendChild(row);
@@ -444,7 +447,69 @@ async function setupDiscord() {
     if (list.children.length) card.appendChild(list);
     card.classList.remove("hidden");
   } catch (err) {
-    console.warn("Discord : impossible de charger le profil", err);
+    console.warn("Discord : impossible de load the profile", err);
+  }
+}
+
+async function setupTopGames() {
+  const box = document.getElementById("top-games");
+  const count = CONFIG.topGames?.count ?? 5;
+  if (!box) return;
+
+  try {
+    const res = await fetch("assets/data/steam.json", { cache: "no-store" });
+    const data = await res.json();
+
+    const games = (data.response?.games || [])
+      .filter(g => g.playtime_forever > 0)
+      .sort((a, b) => b.playtime_forever - a.playtime_forever)
+      .slice(0, count);
+
+    if (!games.length) return;
+
+    const max = games[0].playtime_forever;
+    box.innerHTML = "";
+
+    const title = document.createElement("span");
+    title.className = "pl-label";
+    title.textContent = "My top games (Steam)";
+    box.appendChild(title);
+
+    games.forEach(g => {
+      const row = document.createElement("div");
+      row.className = "tg-row";
+
+      const img = document.createElement("img");
+      img.className = "tg-img";
+      img.alt = g.name;
+      img.src = `https://cdn.akamai.steamstatic.com/steam/apps/${g.appid}/header.jpg`;
+      img.onerror = () => img.remove();
+
+      const info = document.createElement("div");
+      info.className = "tg-info";
+
+      const name = document.createElement("span");
+      name.className = "tg-name";
+      name.textContent = g.name;
+
+      const hours = document.createElement("span");
+      hours.className = "tg-hours";
+      hours.textContent = `${(g.playtime_forever / 60).toFixed(1)} total hours`;
+
+      const bar = document.createElement("div");
+      bar.className = "tg-bar";
+      const fill = document.createElement("span");
+      fill.style.width = `${(g.playtime_forever / max) * 100}%`;
+      bar.appendChild(fill);
+
+      info.append(name, hours, bar);
+      row.append(img, info);
+      box.appendChild(row);
+    });
+
+    box.classList.remove("hidden");
+  } catch (err) {
+    console.warn("Steam : impossible de charger les tops jeux", err);
   }
 }
 
